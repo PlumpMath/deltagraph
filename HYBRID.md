@@ -8,7 +8,7 @@ On the Eclipse side: a standard Maven Java project. At top-level, there's an add
 
 ## Clojure from Java
 
-This side of the interop (invoking Clojure from Java) is fairly well documented: see `JunkInstance` or `Main`. It's pretty much just this:
+This side of the interop (invoking Clojure from Java) is fairly well documented: see `JunkInstance` or [Main](src/main/java/eu/cassiel/deltagraph/testing/Main.java). It's pretty much just this:
 
 	static {
 		RT.var("clojure.core", "require")
