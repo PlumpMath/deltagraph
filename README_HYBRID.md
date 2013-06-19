@@ -19,7 +19,7 @@ This side of the interop (invoking Clojure from Java) is fairly well documented:
 	(JunkInterface) RT.var("eu.cassiel.deltagraph.core", "doit").invoke();
         ...
 
-The root of the Clojure source tree (in our case, `clojure/datagraph/src`) needs to be a source directory in Eclipse, to get it into the classpath. (It can be added as a library directory instead, but that probably doesn't get it copied into JARs during a Maven build - see below).
+The root of the Clojure source tree (in our case, `clojure/datagraph/src`) needs to be a source directory in Eclipse, to get it into the classpath. (It can be added as a library directory instead, but that probably doesn't get it copied into JARs during a Maven build - see below.)
 
 ## Java from Clojure
 
@@ -37,7 +37,7 @@ We need to see the Java interfaces from Clojure, so our [project.clj](clojure/de
 
         :java-source-paths ["../../src/main/java"]
 
-At this stage, we can fire off tests in jUnit (either from Eclipse or `mvn test`) and calls into Clojure work fine. (I've not yet done the Midge tests on the Clojure side.)
+At this stage, we can fire off tests in jUnit (either from Eclipse or `mvn test`) and calls into Clojure work fine. (I've not yet implemented the Midge tests on the Clojure side.)
 
 ## Main Programs
 
