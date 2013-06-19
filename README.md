@@ -2,7 +2,7 @@
 
 # deltagraph
 
-A simple graph package in Clojure with Java API. Documentation will follow in due course, but in the meantime I've written up the structure of the hybrid Java/Clojure project [here](HYBRID.md).
+A simple graph package in Clojure with Java API. Documentation will follow in due course, but in the meantime I've written up the structure of the hybrid Java/Clojure project [in this README](README_HYBRID.md).
 
 ## License
 
