@@ -78,4 +78,4 @@ From the Clojure side:
         cd target/
         java -jar eu.cassiel.deltagraph-clj-0.1.0-SNAPSHOT-standalone.jar 5
 
-(This is the sole reason for the `:gen-class` in the main Clojure namespace.)
+(This is the sole reason for the `:gen-class` in the [main Clojure namespace](clojure/deltagraph/src/eu/cassiel/deltagraph/core.clj).)
