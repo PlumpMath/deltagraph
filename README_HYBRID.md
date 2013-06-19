@@ -2,7 +2,7 @@
 
 ## Background
 
-We want to develop purely in Clojure but present an API which is constructed purely from Java interfaces, for transparent use in Java. So: this is a hybrid Leiningen project plus an Eclipse Java project. The Java needs to call into Clojure (for actual implementation code), while the Clojure needs access to the Java (for interfaces which it is going to `reify`). And we want to be developing in Clojure without worrying about `gen-class` to keep the Java world up-to-date.
+We want to develop purely in Clojure but present an API which is constructed purely from Java interfaces (plus, I guess, a tiny bit of "real" Java as entry point), for transparent use from a Java environment. So: this is a hybrid Leiningen project plus an Eclipse Java project. The Java needs to call into Clojure (for actual implementation code), while the Clojure needs access to the Java (for interfaces which it is going to [reify](http://clojuredocs.org/clojure_core/clojure.core/reify)). And we want to be developing in Clojure without worrying about `gen-class` to keep the Java world up-to-date.
 
 On the Eclipse side: a standard Maven Java project. At top-level, there's an additional directory called `clojure`, containing `datagraph` which is a separate Leiningen project.
 
@@ -21,7 +21,7 @@ This side of the interop (invoking Clojure from Java) is fairly well documented:
 
 The root of the Clojure source tree (in our case, `clojure/datagraph/src`) needs to be a source directory in Eclipse, to get it into the classpath. (It can be added as a library directory instead, but that probably doesn't get it copied into JARs during a Maven build - see below).
 
-## Java from Clojure.
+## Java from Clojure
 
 This is standard interop: we just `reify`:
 
