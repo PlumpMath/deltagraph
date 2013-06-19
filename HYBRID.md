@@ -8,7 +8,7 @@ On the Eclipse side: a standard Maven Java project. At top-level, there's an add
 
 ## Clojure from Java
 
-This side of the interop (invoking Clojure from Java) is fairly well documented: see `JunkInstance` or [Main](src/main/java/eu/cassiel/deltagraph/testing/Main.java). It's pretty much just this:
+This side of the interop (invoking Clojure from Java) is fairly well documented: see [JunkInstance](src/main/java/eu/cassiel/deltagraph/testing/JunkInstance.java) or [Main](src/main/java/eu/cassiel/deltagraph/testing/Main.java). It's pretty much just this:
 
 	static {
 		RT.var("clojure.core", "require")
@@ -33,7 +33,7 @@ This is standard interop: we just `reify`:
         (reify JunkInterface
             (^int doSomeJunk [this ^int i] (- i)))
 
-We need to see the Java interfaces from Clojure, so our `project.clj` contains this:
+We need to see the Java interfaces from Clojure, so our [project.clj](clojure/deltagraph/project.clj) contains this:
 
         :java-source-paths ["../../src/main/java"]
 
