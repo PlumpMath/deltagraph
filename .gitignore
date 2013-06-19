@@ -8,6 +8,6 @@
 /checkouts
 /classes
 /lib
-/target
+target
 pom.xml
 pom.xml.asc
