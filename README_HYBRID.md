@@ -79,7 +79,7 @@ Standalone builds work fine as well. From the Java side:
         java -cp [...]/clojure-1.5.1.jar:eu.cassiel.deltagraph-0.0.1-SNAPSHOT.jar \
                 eu.cassiel.deltagraph.testing.Main 5
 
-(Note the explicit Clojure JAR in there.) Obviously I've not bothered with the tedious work of getting the manifest sorted for identifying the main class.
+(Note the explicit Clojure JAR in there; we'll probably be using additional libraries by the time you read this, so check `project.clj`.) Obviously I've not bothered with the tedious work of getting the manifest sorted for identifying the main class.
 
 From the Clojure side:
 
