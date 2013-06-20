@@ -46,8 +46,23 @@
         :else
         (assoc-in g [:edges id] e)))
 
+(defn other
+  "Opposite vertex along an edge. TODO: should probably make sure the edge is
+   in the graph."
+  [{:keys [vertices]} {:keys [from-v to-v] :as e} v]
+  (cond (= from-v (:id v))
+        (or (get vertices to-v)
+            (throw+ [:type ::VERTEX-NOT-PRESENT :id to-v]))
+
+        (= to-v (:id v))
+        (or (get vertices from-v)
+            (throw+ [:type ::VERTEX-NOT-PRESENT :id to-v]))
+
+        :else
+        (throw+ [:type ::VERTEX-NOT-IN-EDGE :v-id (:id v) :e-id (:id e)])))
+
 (defn vertices [{vv :vertices}]
-  (set (vals vv)))
+  (vals vv))
 
 (defn edges [{ee :edges}]
-  (set (vals ee)))
+  (vals ee))
