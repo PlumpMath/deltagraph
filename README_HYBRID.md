@@ -1,3 +1,5 @@
+`-*- word-wrap: t; -*-`
+
 # Java and Clojure Project Interop
 
 ## Background
@@ -38,6 +40,14 @@ We need to see the Java interfaces from Clojure, so our [project.clj](clojure/de
         :java-source-paths ["../../src/main/java"]
 
 At this stage, we can fire off tests in jUnit (either from Eclipse or `mvn test`) and calls into Clojure work fine. (I've not yet implemented the Midge tests on the Clojure side.)
+
+## Usage
+
+If the Clojure source directory is added to the Eclipse project, then the top-level `target` directory will contain both (a copy of) the Clojure sources - possibly after a refresh if they've been edited externally - and the compiled Java classes, ready for adding to a classpath for development.
+
+Leiningen can offer the same assets. The Clojure sources are in the Clojure `src` directory, but Leiningen needs to be told to compile the Java sources (`lein javac`) into its own `target` directory. Clearly, the directory offered by Eclipse is more convenient.
+
+For actual development, it makes sense to spawn a thread with a network REPL into a running system. I leave this as an exercise. (I have one in the [Cubewar server](https://github.com/cassiel/cubewar).)
 
 ## Main Programs
 
