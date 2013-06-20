@@ -51,7 +51,7 @@ For actual development, it makes sense to spawn a thread with a network REPL int
 
 ## Main Programs
 
-Just for fun, we've built console main programs on both sides. Both take a single integer as argument, and each calls its counterpart with the counter decremented:
+Just for fun, we've built console main programs on both sides. Both take a single integer as argument, and each calls its counterpart with the counter decremented, stopping at zero:
 
         I am the main program in Java.
         Across to Clojure at: 5
