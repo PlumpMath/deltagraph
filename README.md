@@ -8,4 +8,4 @@ A simple graph package in Clojure with Java API. Documentation will follow in du
 
 Distributed under the [GNU General Public License](http://www.gnu.org/copyleft/gpl.html).
 
-Copyright (C) 2012 Nick Rothwell.
+Copyright (C) 2013 Nick Rothwell.

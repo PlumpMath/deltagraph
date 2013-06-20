@@ -45,3 +45,9 @@
 
         :else
         (assoc-in g [:edges id] e)))
+
+(defn vertices [{vv :vertices}]
+  (set (vals vv)))
+
+(defn edges [{ee :edges}]
+  (set (vals ee)))
