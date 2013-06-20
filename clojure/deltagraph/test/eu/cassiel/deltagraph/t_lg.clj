@@ -1,9 +1,9 @@
 (ns eu.cassiel.deltagraph.t-lg
-  (:use midje.sweet)
+  (:use midje.sweet
+        clojure.test
+        slingshot.test)
   (:require (eu.cassiel.deltagraph [lg :as lg])))
 
-(fact "vertex attributes"
-      (-> (lg/new-vertex)
-          (lg/add-attribute :A 44)
-          (lg/add-attribute :B "B")
-          (lg/get-vertex-attributes)) => {:A 44 :B "B"})
+(deftest orphan-edges
+  (is (thrown+? [:type ::lg/VERTEX-NOT-PRESENT]
+                (lg/put-edge lg/empty-graph (lg/new-edge (lg/new-vertex) (lg/new-vertex))))))

@@ -1,26 +1,47 @@
-(ns eu.cassiel.deltagraph.lg)
+(ns eu.cassiel.deltagraph.lg
+  "'Little Graph' package. The graph structure is linked together via vertex and
+   node IDs to allow relatively lightweight functional updates."
+  (:use [slingshot.slingshot :only [try+ throw+]]))
 
-(defprotocol VERTEX
-  (get-connected [this] "Set of all opposite vertices on edges attached to this vertex.")
-  (get-vertex-attributes [this] "Hash of all attributes at this vertex."))
+(def ^{:private true} new-stamp
+  (let [stamp (atom 0)]
+    #(swap! stamp inc)))
 
-(defprotocol EDGE
-  (get-other [this v] "Vertex at the other end of this edge from `v`.
-                       (Error if `v` not on this edge?)")
-  (get-edge-attributes [this] "Hash of all attributes on this edge."))
-
-(def stamp (atom 0))
-
-(defn- new-stamp [] (swap! stamp inc))
+(def
+  ^{:doc "The singleton empty graph."}
+  empty-graph
+  {:edges {}
+   :vertices {}})
 
 (defn new-vertex
-  "Empty vertex."
+  "Create new vertex with unique ID."
   []
-  (reify VERTEX
-    (get-connected [_] #{})
-    (get-vertex-attributes [_] {})))
+  {:id (new-stamp)
+   :attributes {}})
 
-(defn add-attribute [v k value]
-  (reify VERTEX
-    (get-connected [_] (get-connected v))
-    (get-vertex-attributes [_] (assoc (get-vertex-attributes v) k value))))
+(defn put-vertex
+  "Add vertex to a graph, or replace it (depending on whether `id` is unique).
+   Returns new graph."
+  [g v]
+  (assoc-in g [:vertices (:id v)] v))
+
+(defn new-edge
+  "Create a new edge with unique ID between two vertices (not necessarily in a graph)."
+  [v1 v2]
+  {:id (new-stamp)
+   :from-v (:id v1)
+   :to-v (:id v2)
+   :attributes {}})
+
+(defn put-edge
+  "Add an edge to a graph. Fail if either vertex ID is not present. Returns new graph."
+  [{:keys [vertices] :as g}
+   {:keys [id from-v to-v] :as e}]
+  (cond (not (get vertices from-v))
+        (throw+ {:type ::VERTEX-NOT-PRESENT :id from-v})
+
+        (not (get vertices to-v))
+        (throw+ {:type ::VERTEX-NOT-PRESENT :id to-v})
+
+        :else
+        (assoc-in g [:edges id] e)))
