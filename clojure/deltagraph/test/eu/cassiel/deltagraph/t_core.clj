@@ -4,3 +4,6 @@
 
 (fact "foo"
       "A" => "A")
+
+(fact "interop"
+      (.doSomeJunk (c/doit) 99) => -99)

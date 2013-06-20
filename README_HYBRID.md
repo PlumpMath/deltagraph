@@ -39,7 +39,7 @@ We need to see the Java interfaces from Clojure, so our [project.clj](clojure/de
 
         :java-source-paths ["../../src/main/java"]
 
-At this stage, we can fire off tests in jUnit (either from Eclipse or `mvn test`) and calls into Clojure work fine. (I've not yet implemented the Midge tests on the Clojure side.)
+At this stage, we can fire off tests in jUnit (either from Eclipse or `mvn test`) and calls into Clojure work fine. Similarly, Midje unit tests in Clojure call into Java without problems.
 
 ## Usage
 
