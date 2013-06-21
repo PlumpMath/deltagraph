@@ -17,7 +17,7 @@
   "Create new vertex with unique ID."
   []
   {:id (new-stamp)
-   :attributes {}})
+   :properties {}})
 
 (defn put-vertex
   "Add vertex to a graph, or replace it (depending on whether `id` is unique).
@@ -31,7 +31,7 @@
   {:id (new-stamp)
    :from-v (:id v1)
    :to-v (:id v2)
-   :attributes {}})
+   :properties {}})
 
 (defn put-edge
   "Add an edge to a graph. Fail if either vertex ID is not present. Returns new graph."
@@ -60,6 +60,18 @@
 
         :else
         (throw+ [:type ::VERTEX-NOT-IN-EDGE :v-id (:id v) :e-id (:id e)])))
+
+(defn retrieve-vertex
+  "Retrieve 'current' vertex from `g` corresponding to (same ID as) `v`."
+  [{:keys [vertices]} v]
+  (or (get vertices (:id v))
+      (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id (:id v)])))
+
+(defn retrieve-edge
+  "Retrieve 'current' edge from `e` corresponding to (same ID as) `e`."
+  [{:keys [edges]} e]
+  (or (get edges (:id e))
+      (throw+ [:type ::EDGE-NOT-IN-GRAPH :id (:id e)])))
 
 (defn vertices [{vv :vertices}]
   (vals vv))
