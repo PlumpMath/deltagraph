@@ -14,25 +14,35 @@
   {:edges {}
    :vertices {}})
 
-(defn new-vertex
-  "Create new vertex with unique ID."
-  []
-  {:id (new-stamp)
-   :properties {}})
+(defn add-vertex
+  "Create new vertex (with unique ID). In expectation of alternate representations
+   where IDs are indices into internal data structures, a vertex is added
+   immediately to a graph, yielding a new graph."
+  [g]
+  (let [id (new-stamp)
+        v {:id id :properties {}}]
+    [(assoc-in g [:vertices id] v) v]))
 
-(defn put-vertex
-  "Add vertex to a graph, or replace it (depending on whether `id` is unique).
-   Returns new graph."
-  [g v]
-  (assoc-in g [:vertices (:id v)] v))
+(defn add-edge
+  "Create a new edge with unique ID between two vertices. As for vertices,
+   add immediately to a graph. Fail if either vertex is not present."
+  [{:keys [vertices] :as g} v1 v2]
+  (let [from-id (:id v1)
+        to-id (:id v2)]
+    (cond (not (get vertices from-id))
+          ;; TODO: in other representations, we'll need a better vertex-present check.
+          (throw+ {:type ::VERTEX-NOT-PRESENT :id from-id})
 
-(defn new-edge
-  "Create a new edge with unique ID between two vertices (not necessarily in a graph)."
-  [v1 v2]
-  {:id (new-stamp)
-   :from-v (:id v1)
-   :to-v (:id v2)
-   :properties {}})
+          (not (get vertices to-id))
+          (throw+ {:type ::VERTEX-NOT-PRESENT :id to-id})
+
+          :else
+          (let [id (new-stamp)
+                e {:id id
+                   :from-v from-id
+                   :to-v to-id
+                   :properties {}}]
+            [(assoc-in g [:edges id] e) e]))))
 
 (defn put-edge
   "Add an edge to a graph. Fail if either vertex ID is not present. Returns new graph."
