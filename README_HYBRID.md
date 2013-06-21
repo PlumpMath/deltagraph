@@ -18,7 +18,7 @@ This side of the interop (invoking Clojure from Java) is fairly well documented:
 	}
 
         ...
-	(JunkInterface) RT.var("eu.cassiel.deltagraph.core", "doit").invoke();
+	(IJunkInterface) RT.var("eu.cassiel.deltagraph.core", "doit").invoke();
         ...
 
 The root of the Clojure source tree (in our case, `clojure/datagraph/src`) needs to be a source directory in Eclipse, to get it into the classpath. (It can be added as a library directory instead, but that probably doesn't get it copied into JARs during a Maven build - see below.)
@@ -28,11 +28,11 @@ The root of the Clojure source tree (in our case, `clojure/datagraph/src`) needs
 This is standard interop: we just `reify`:
 
         (ns eu.cassiel.deltagraph.core
-            (:import (eu.cassiel.deltagraph.testing JunkInterface))
+            (:import (eu.cassiel.deltagraph.testing IJunkInterface))
             (:gen-class :main true))
 
         ...
-        (reify JunkInterface
+        (reify IJunkInterface
             (^int doSomeJunk [this ^int i] (- i)))
 
 We need to see the Java interfaces from Clojure, so our [project.clj](clojure/deltagraph/project.clj) contains this:

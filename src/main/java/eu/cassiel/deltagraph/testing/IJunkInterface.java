@@ -3,6 +3,6 @@
 
 package eu.cassiel.deltagraph.testing;
 
-public interface JunkInterface {
+public interface IJunkInterface {
 	public int doSomeJunk(int i);
 }

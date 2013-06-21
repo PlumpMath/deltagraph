@@ -1,11 +1,11 @@
 (ns eu.cassiel.deltagraph.core
-  (:import (eu.cassiel.deltagraph.testing JunkInterface Main))
+  (:import (eu.cassiel.deltagraph.testing IJunkInterface Main))
   (:gen-class :main true))
 
 (defn doit
   "Called from Java via jUnit."
   []
-  (reify JunkInterface
+  (reify IJunkInterface
     (^int doSomeJunk [this ^int i] (- i))))
 
 (defn -main [& args]
