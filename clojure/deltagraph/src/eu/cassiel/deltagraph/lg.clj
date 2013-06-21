@@ -1,7 +1,8 @@
 (ns eu.cassiel.deltagraph.lg
   "'Little Graph' package. The graph structure is linked together via vertex and
    node IDs to allow relatively lightweight functional updates."
-  (:use [slingshot.slingshot :only [try+ throw+]]))
+  (:use [clojure.core.incubator :only [dissoc-in]]
+        [slingshot.slingshot :only [try+ throw+]]))
 
 (def ^{:private true} new-stamp
   (let [stamp (atom 0)]
@@ -72,6 +73,24 @@
   [{:keys [edges]} e]
   (or (get edges (:id e))
       (throw+ [:type ::EDGE-NOT-IN-GRAPH :id (:id e)])))
+
+(defn remove-edge
+  "Remove an edge from a graph; vertices untouched."
+  [g e]
+  (let [path [:edges (:id e)]]
+    (if (get-in g path)
+      (dissoc-in g path)
+      (throw+ [:type ::EDGE-NOT-IN-GRAPH :id (:id e)]))))
+
+(defn remove-vertex
+  "Remove a vertex from a graph (as well as any edges attached to it)."
+  [g {:keys [id] :as v}]
+  (let [path [:vertices id]]
+    (if (get-in g path)
+      (let [edge-includes-v? (fn [e] (#{(:from-v e) (:to-v e)} id))
+            g' (reduce remove-edge g (filter edge-includes-v? (vals (:edges g))))]
+        (dissoc-in g' path))
+      (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id id]))))
 
 (defn vertices [{vv :vertices}]
   (vals vv))

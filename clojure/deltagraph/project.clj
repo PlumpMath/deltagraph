@@ -6,6 +6,7 @@
   :java-source-paths ["../../src/main/java"]
   :main eu.cassiel.deltagraph.core
   :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/core.incubator "0.1.3"]
                  [slingshot "0.10.3"]]
   :plugins [[lein-midje "3.0.1"]]
   :profiles
