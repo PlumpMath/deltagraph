@@ -5,7 +5,9 @@ package eu.cassiel.deltagraph.lg;
 
 import java.util.List;
 
-public interface IGraph {
+import eu.cassiel.deltagraph.IWrapped;
+
+public interface IGraph extends IWrapped {
 	/**	Add a new vertex to a graph.
 
 		@return the new graph paired with the new vertex

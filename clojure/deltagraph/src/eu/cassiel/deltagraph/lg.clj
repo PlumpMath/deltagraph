@@ -23,10 +23,12 @@
         v {:id id :properties {}}]
     [(assoc-in g [:vertices id] v) v]))
 
-(defn add-edge-ids
+(defn add-edge
   "Create a new edge with unique ID between two vertices. As for vertices,
    add immediately to a graph. Fail if either vertex is not present."
-  [{:keys [vertices] :as g} from-id to-id]
+  [{:keys [vertices] :as g}
+   {from-id :id}
+   {to-id :id}]
   (cond (not (get vertices from-id))
         ;; TODO: in other representations, we'll need a better vertex-present check.
         (throw+ {:type ::VERTEX-NOT-PRESENT :id from-id})
@@ -41,22 +43,6 @@
                  :to-v to-id
                  :properties {}}]
           [(assoc-in g [:edges id] e) e])))
-
-(defn add-edge [g v1 v2]
-  (add-edge-ids g (:id v1) (:id v2)))
-
-(defn put-edge
-  "Add an edge to a graph. Fail if either vertex ID is not present. Returns new graph."
-  [{:keys [vertices] :as g}
-   {:keys [id from-v to-v] :as e}]
-  (cond (not (get vertices from-v))
-        (throw+ {:type ::VERTEX-NOT-PRESENT :id from-v})
-
-        (not (get vertices to-v))
-        (throw+ {:type ::VERTEX-NOT-PRESENT :id to-v})
-
-        :else
-        (assoc-in g [:edges id] e)))
 
 (defn other
   "Opposite vertex along an edge. TODO: should probably make sure the edge is

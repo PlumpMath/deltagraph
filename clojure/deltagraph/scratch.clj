@@ -23,3 +23,5 @@
   (lg/add-edge g v1 v2))
 
 (.addVertex shim/emptyGraph)
+
+(extends? lg/empty-graph java.util.HashMap)

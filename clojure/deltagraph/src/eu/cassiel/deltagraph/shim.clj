@@ -6,32 +6,45 @@
 
 (defn- vertex [v]
   (reify IVertex
-    (^int getId [this] (:id v))))
+    (^int getId [_] (:id v))
+
+    (repr [_] v)))
 
 (defn- edge [e]
   (reify IEdge
-    (^int getId [this] (:id e))))
+    (^int getId [_] (:id e))
+
+    (^IVertex getOther [_
+                        ^IGraph g
+                        ^IVertex thisVertex]
+      (vertex (lg/other (.repr g)
+                        e
+                        (.repr thisVertex))))
+
+    (repr [_] e)))
 
 (declare graph)
 
 (defn- graph-plus [wrapper [g x]]
   (reify IGraphPlus
-    (^IGraph getGraph [this] (graph g))
-    (^Object getItem [this] (wrapper x))))
+    (^IGraph getGraph [_] (graph g))
+    (^Object getItem [_] (wrapper x))))
 
 (defn- graph [g]
   (reify IGraph
-    (^IGraphPlus addVertex [this]
+    (^IGraphPlus addVertex [_]
       (graph-plus vertex (lg/add-vertex g)))
 
-    (^IGraphPlus addEdge [this ^IVertex v1 ^IVertex v2]
-      (graph-plus edge (lg/add-edge-ids g (.getId v1) (.getId v2))))
+    (^IGraphPlus addEdge [_ ^IVertex v1 ^IVertex v2]
+      (graph-plus edge (lg/add-edge g (.repr v1) (.repr v2))))
 
-    (^List getVertices [this]
+    (^List getVertices [_]
       (map vertex (lg/vertices g)))
 
-    (^List getEdges [this]
-      (map edge (lg/edges g)))))
+    (^List getEdges [_]
+      (map edge (lg/edges g)))
+
+    (repr [_] g)))
 
 (def emptyGraph
   (graph lg/empty-graph))
