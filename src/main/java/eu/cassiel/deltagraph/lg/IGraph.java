@@ -19,4 +19,18 @@ public interface IGraph {
 	 */
 
 	List<IVertex> getVertices();
+	
+	/**	Add a new edge to a graph (the vertices must be present already).
+
+		@return the new graph paired with the new edge.
+	 */
+	
+	IGraphPlus<IEdge> addEdge(IVertex from, IVertex to);
+
+	/**	Return a list of the edges in this graph.
+
+		@return the edges
+	 */
+
+	List<IEdge> getEdges();
 }

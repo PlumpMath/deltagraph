@@ -9,5 +9,11 @@ package eu.cassiel.deltagraph.lg;
  */
 
 public interface IVertex {
+	/**	Get the vertex's ID - either globally unique, or (depending on underlying
+ 		implementation) referring to the graph.
+ 	
+		@return the ID
+	 */
 
+	int getId();
 }

@@ -23,26 +23,27 @@
         v {:id id :properties {}}]
     [(assoc-in g [:vertices id] v) v]))
 
-(defn add-edge
+(defn add-edge-ids
   "Create a new edge with unique ID between two vertices. As for vertices,
    add immediately to a graph. Fail if either vertex is not present."
-  [{:keys [vertices] :as g} v1 v2]
-  (let [from-id (:id v1)
-        to-id (:id v2)]
-    (cond (not (get vertices from-id))
-          ;; TODO: in other representations, we'll need a better vertex-present check.
-          (throw+ {:type ::VERTEX-NOT-PRESENT :id from-id})
+  [{:keys [vertices] :as g} from-id to-id]
+  (cond (not (get vertices from-id))
+        ;; TODO: in other representations, we'll need a better vertex-present check.
+        (throw+ {:type ::VERTEX-NOT-PRESENT :id from-id})
 
-          (not (get vertices to-id))
-          (throw+ {:type ::VERTEX-NOT-PRESENT :id to-id})
+        (not (get vertices to-id))
+        (throw+ {:type ::VERTEX-NOT-PRESENT :id to-id})
 
-          :else
-          (let [id (new-stamp)
-                e {:id id
-                   :from-v from-id
-                   :to-v to-id
-                   :properties {}}]
-            [(assoc-in g [:edges id] e) e]))))
+        :else
+        (let [id (new-stamp)
+              e {:id id
+                 :from-v from-id
+                 :to-v to-id
+                 :properties {}}]
+          [(assoc-in g [:edges id] e) e])))
+
+(defn add-edge [g v1 v2]
+  (add-edge-ids g (:id v1) (:id v2)))
 
 (defn put-edge
   "Add an edge to a graph. Fail if either vertex ID is not present. Returns new graph."

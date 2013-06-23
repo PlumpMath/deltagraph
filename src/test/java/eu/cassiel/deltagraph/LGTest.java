@@ -10,6 +10,7 @@ import org.junit.Test;
 import eu.cassiel.deltagraph.lg.IGraph;
 import eu.cassiel.deltagraph.lg.IGraphPlus;
 import eu.cassiel.deltagraph.lg.IVertex;
+import eu.cassiel.deltagraph.lg.IEdge;
 
 public class LGTest {
 	@Test
@@ -22,8 +23,24 @@ public class LGTest {
 	public void addVertices() {
 		IGraphPlus<IVertex> added = LG.emptyGraph.addVertex();
 		assertEquals(1, added.getGraph().getVertices().size());
-		
+		assertTrue(added.getItem() instanceof IVertex);
+
 		added = added.getGraph().addVertex();
 		assertEquals(2, added.getGraph().getVertices().size());
+		
+		assertTrue(added.getGraph().getVertices().get(0) instanceof IVertex);
+	}
+	
+	@Test
+	public void addEdges() {
+		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
+		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
+
+		IGraphPlus<IEdge> added3 =
+				added2.getGraph().addEdge(added1.getItem(), added2.getItem());
+
+		assertEquals(1, added3.getGraph().getEdges().size());
+		assertTrue(added3.getItem() instanceof IEdge);
+		assertTrue(added3.getGraph().getEdges().get(0) instanceof IEdge);
 	}
 }
