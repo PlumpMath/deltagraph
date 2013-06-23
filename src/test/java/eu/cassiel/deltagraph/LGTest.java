@@ -45,6 +45,18 @@ public class LGTest {
 	}
 	
 	@Test
+	public void removal() {
+		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
+		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
+
+		IGraphPlus<IEdge> added3 =
+				added2.getGraph().addEdge(added1.getItem(), added2.getItem());
+
+		assertEquals(1, added3.getGraph().removeVertex(added1.getItem()).getVertices().size());
+		assertEquals(0, added3.getGraph().removeEdge(added3.getItem()).getEdges().size());
+	}
+	
+	@Test
 	public void getOther() {
 		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
 		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();

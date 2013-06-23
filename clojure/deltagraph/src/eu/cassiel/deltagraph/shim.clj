@@ -35,8 +35,14 @@
     (^IGraphPlus addVertex [_]
       (graph-plus vertex (lg/add-vertex g)))
 
+    (^IGraph removeVertex [_ ^IVertex v]
+      (graph (lg/remove-vertex g (.repr v))))
+
     (^IGraphPlus addEdge [_ ^IVertex v1 ^IVertex v2]
       (graph-plus edge (lg/add-edge g (.repr v1) (.repr v2))))
+
+    (^IGraph removeEdge [_ ^IEdge e]
+      (graph (lg/remove-edge g (.repr e))))
 
     (^List getVertices [_]
       (map vertex (lg/vertices g)))

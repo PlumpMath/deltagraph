@@ -14,6 +14,13 @@ public interface IGraph extends IWrapped {
 	 */
 
 	IGraphPlus<IVertex> addVertex();
+	
+	/**	Remove a vertex from a graph (as well as any edges on that vertex).
+
+		@return a new graph
+	 */
+	
+	IGraph removeVertex(IVertex v);
 
 	/**	Return a list of the vertices in this graph.
 
@@ -28,6 +35,13 @@ public interface IGraph extends IWrapped {
 	 */
 	
 	IGraphPlus<IEdge> addEdge(IVertex from, IVertex to);
+
+	/**	Remove an edge from a graph.
+
+		@return a new graph
+	 */
+	
+	IGraph removeEdge(IEdge e);
 
 	/**	Return a list of the edges in this graph.
 
