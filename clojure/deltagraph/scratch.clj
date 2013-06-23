@@ -1,6 +1,7 @@
 (ns user
   (:require (eu.cassiel.deltagraph [core :as c]
-                                   [lg :as lg]))
+                                   [lg :as lg]
+                                   [shim :as shim]))
   (:import (eu.cassiel.deltagraph.testing JunkInterface)))
 
 (c/doit)
@@ -20,3 +21,5 @@
       [g v1] (lg/add-vertex g)
       [g v2] (lg/add-vertex g)]
   (lg/add-edge g v1 v2))
+
+(.addVertex shim/emptyGraph)

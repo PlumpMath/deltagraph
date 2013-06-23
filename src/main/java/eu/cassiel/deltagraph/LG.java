@@ -12,6 +12,7 @@ public class LG {
 		RT.var("clojure.core", "require").invoke(Symbol.intern("eu.cassiel.deltagraph.shim"));		
 	}
 
+	/**	Entry point: fixed empty graph. */
 	public static IGraph emptyGraph =
 			(IGraph) RT.var("eu.cassiel.deltagraph.shim", "emptyGraph").get();
 }
