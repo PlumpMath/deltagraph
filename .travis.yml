@@ -1,2 +1,4 @@
 language: clojure
-script: cd clojure/deltagraph && lein2 midge
+lein: lein2
+before_script: cd clojure/deltagraph
+script: lein2 midge
