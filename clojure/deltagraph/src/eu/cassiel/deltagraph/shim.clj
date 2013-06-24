@@ -2,7 +2,7 @@
   "Java shims for namespace `lg`."
   (:require (eu.cassiel.deltagraph [lg :as lg]))
   (:import (eu.cassiel.deltagraph.lg IVertex IEdge IGraph IGraphPlus)
-           (java.util List)))
+           (java.util Set)))
 
 (defn- vertex [v]
   (reify IVertex
@@ -44,11 +44,12 @@
     (^IGraph removeEdge [_ ^IEdge e]
       (graph (lg/remove-edge g (.repr e))))
 
-    (^List getVertices [_]
-      (map vertex (lg/vertices g)))
+    (^Set getVertices [_]
+      ;; Slight overkill here (and `getEdges`); set using object identity only.
+      (set (map vertex (lg/vertices g))))
 
-    (^List getEdges [_]
-      (map edge (lg/edges g)))
+    (^Set getEdges [_]
+      (set (map edge (lg/edges g))))
 
     (repr [_] g)))
 

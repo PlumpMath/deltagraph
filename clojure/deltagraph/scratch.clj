@@ -35,3 +35,5 @@
       [g v2] (lg/add-vertex g)
       [g e] (lg/add-edge g v1 v2)]
   (lg/connected g v2))
+
+(set (map inc #{1 2 3}))

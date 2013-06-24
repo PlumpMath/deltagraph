@@ -3,7 +3,7 @@
 
 package eu.cassiel.deltagraph.lg;
 
-import java.util.List;
+import java.util.Set;
 
 import eu.cassiel.deltagraph.IWrapped;
 
@@ -27,7 +27,7 @@ public interface IGraph extends IWrapped {
 		@return the vertices
 	 */
 
-	List<IVertex> getVertices();
+	Set<IVertex> getVertices();
 	
 	/**	Add a new edge to a graph (the vertices must be present already).
 
@@ -48,5 +48,5 @@ public interface IGraph extends IWrapped {
 		@return the edges
 	 */
 
-	List<IEdge> getEdges();
+	Set<IEdge> getEdges();
 }

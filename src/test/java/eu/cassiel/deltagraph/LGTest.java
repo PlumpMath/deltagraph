@@ -28,7 +28,7 @@ public class LGTest {
 		added = added.getGraph().addVertex();
 		assertEquals(2, added.getGraph().getVertices().size());
 		
-		assertTrue(added.getGraph().getVertices().get(0) instanceof IVertex);
+		assertTrue(added.getGraph().getVertices().toArray()[0] instanceof IVertex);
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class LGTest {
 
 		assertEquals(1, added3.getGraph().getEdges().size());
 		assertTrue(added3.getItem() instanceof IEdge);
-		assertTrue(added3.getGraph().getEdges().get(0) instanceof IEdge);
+		assertTrue(added3.getGraph().getEdges().toArray()[0] instanceof IEdge);
 	}
 	
 	@Test

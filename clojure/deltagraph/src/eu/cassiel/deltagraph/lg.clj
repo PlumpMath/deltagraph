@@ -24,10 +24,10 @@
         v {:id id :properties {}}]
     [(assoc-in g [:vertices id] v) v]))
 
-(defn compare-vertex
-  "Vertex comparison is timestamp comparison."
-  [v1 v2]
-  (compare (:id v1) (:id v2)))
+(defn compare-by-id
+  "Vertex/edge comparison is timestamp comparison."
+  [item1 item2]
+  (compare (:id item1) (:id item2)))
 
 (defn add-edge
   "Create a new edge with unique ID between two vertices. As for vertices,
@@ -70,8 +70,8 @@
   [{:keys [vertices edges]} v]
   (let [outgoing-edges (filter (fn [e] (when (= (:from-v e) (:id v)) e)) (vals edges))
         incoming-edges (filter (fn [e] (when (= (:to-v e) (:id v)) e)) (vals edges))]
-    (union (apply sorted-set-by compare-vertex (map (comp vertices :to-v) outgoing-edges))
-           (apply sorted-set-by compare-vertex (map (comp vertices :from-v) incoming-edges)))))
+    (union (apply sorted-set-by compare-by-id (map (comp vertices :to-v) outgoing-edges))
+           (apply sorted-set-by compare-by-id (map (comp vertices :from-v) incoming-edges)))))
 
 (defn retrieve-vertex
   "Retrieve 'current' vertex from `g` corresponding to (same ID as) `v`."
@@ -104,7 +104,7 @@
       (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id id]))))
 
 (defn vertices [{vv :vertices}]
-  (vals vv))
+  (apply sorted-set-by compare-by-id (vals vv)))
 
 (defn edges [{ee :edges}]
-  (vals ee))
+  (apply sorted-set-by compare-by-id (vals ee)))
