@@ -103,8 +103,19 @@
         (dissoc-in g' path))
       (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id id]))))
 
-(defn vertices [{vv :vertices}]
+(defn vertices
+  "Retrieve set of vertices in graph."
+  [{vv :vertices}]
   (apply sorted-set-by compare-by-id (vals vv)))
 
-(defn edges [{ee :edges}]
+(defn edges
+  "Retrieve set of edges in graph."
+  [{ee :edges}]
   (apply sorted-set-by compare-by-id (vals ee)))
+
+(defn put-dictionary
+  "Works for both edges and vertices"
+  [g collection-tag item dict]
+  (let [item' (assoc item :properties dict)]
+    [(assoc-in g [collection-tag (:id item)] item')
+     item']))

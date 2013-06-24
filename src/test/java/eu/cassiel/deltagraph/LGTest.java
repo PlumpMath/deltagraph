@@ -70,4 +70,16 @@ public class LGTest {
 		assertEquals(added2.getItem().getId(),
 					 added3.getItem().getOther(added3.getGraph(), added1.getItem()).getId());
 	}
+	
+	@Test
+	public void dictionaries() {
+		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
+		IVertex v = added1.getItem();
+		IDict dict = v.getDictionary();
+		dict = dict.putProperty("ANSWER", 42);
+		IGraphPlus<IVertex> added2 = v.putDictionary(added1.getGraph(), dict);
+		
+		assertNull(v.getDictionary().getProperty("ANSWER"));
+		assertEquals(42, added2.getItem().getDictionary().getProperty("ANSWER"));
+	}
 }

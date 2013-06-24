@@ -108,3 +108,32 @@
 
                (count (lg/edges g)) => 1
                (count (lg/edges (lg/remove-edge g e))) => 0)))
+
+(facts "dictionaries"
+       (fact "add dictionary item to vertex"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   d (assoc (:properties v1) "ANSWER" 42)
+                   [g v2] (lg/put-dictionary g :vertices v1 d)
+                   v3 (lg/retrieve-vertex g v1)]
+               ((:properties v2) "ANSWER") => 42
+               ((:properties v3) "ANSWER") => 42
+               ((:properties v1) "ANSWER") => falsey))
+
+       (fact "add dictionary item to edge"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   [g v2] (lg/add-vertex g)
+                   [g v3] (lg/add-vertex g)
+                   [g e12] (lg/add-edge g v1 v2)
+                   [g e31] (lg/add-edge g v3 v1)
+                   d12 (assoc (:properties e12) "E12" "1-2")
+                   d31 (assoc (:properties e31) "E31" "3-1")
+                   [g e12'] (lg/put-dictionary g :edges e12 d12)
+                   [g e31'] (lg/put-dictionary g :edges e31 d31)]
+               ((:properties (lg/retrieve-edge g e12)) "E12") => "1-2"
+               ((:properties (lg/retrieve-edge g e12')) "E12") => "1-2"
+               ((:properties (lg/retrieve-edge g e12)) "E31") => falsey
+               ((:properties (lg/retrieve-edge g e12')) "E31") => falsey
+               ((:properties (lg/retrieve-edge g e31)) "E12") => falsey
+               ((:properties (lg/retrieve-edge g e31')) "E12") => falsey
+               ((:properties (lg/retrieve-edge g e31)) "E31") => "3-1"
+               ((:properties (lg/retrieve-edge g e31')) "E31") => "3-1")))
