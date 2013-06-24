@@ -1,18 +1,52 @@
 (ns eu.cassiel.deltagraph.shim
   "Java shims for namespace `lg`."
   (:require (eu.cassiel.deltagraph [lg :as lg]))
-  (:import (eu.cassiel.deltagraph.lg IVertex IEdge IGraph IGraphPlus)
+  (:import (eu.cassiel.deltagraph IDict)
+           (eu.cassiel.deltagraph.lg IVertex IEdge IGraph IGraphPlus)
            (java.util Set)))
+
+(defn- dict
+  "Create IDict from hash table."
+  [hashtab]
+  (reify IDict
+    (^IDict putProperty [_ ^String key ^Object value]
+      (dict (assoc hashtab key value)))
+
+    (^Object getProperty [_ ^String key]
+      (hashtab key))
+
+    (repr [_] hashtab)))
+
+(declare graph)
+
+(defn- graph-plus [wrapper [g x]]
+  (reify IGraphPlus
+    (^IGraph getGraph [_] (graph g))
+    (^Object getItem [_] (wrapper x))))
 
 (defn- vertex [v]
   (reify IVertex
     (^int getId [_] (:id v))
+
+    (^IDict getDictionary [_] (dict (:properties v)))
+
+    (^IGraphPlus putDictionary [_
+                                ^IGraph g
+                                ^IDict d]
+      (graph-plus vertex (lg/put-dictionary (.repr g) :vertices v (.repr d))))
 
     (repr [_] v)))
 
 (defn- edge [e]
   (reify IEdge
     (^int getId [_] (:id e))
+
+    (^IDict getDictionary [_] (dict (:properties e)))
+
+    (^IGraphPlus putDictionary [_
+                                ^IGraph g
+                                ^IDict d]
+      (graph-plus edge (lg/put-dictionary (.repr g) :edges e (.repr d))))
 
     (^IVertex getOther [_
                         ^IGraph g
@@ -22,13 +56,6 @@
                         (.repr thisVertex))))
 
     (repr [_] e)))
-
-(declare graph)
-
-(defn- graph-plus [wrapper [g x]]
-  (reify IGraphPlus
-    (^IGraph getGraph [_] (graph g))
-    (^Object getItem [_] (wrapper x))))
 
 (defn- graph [g]
   (reify IGraph

@@ -8,7 +8,7 @@ package eu.cassiel.deltagraph;
 	@author Nick Rothwell, nick@cassiel.com / nick@loadbang.net
  */
 
-public interface IDict {
+public interface IDict extends IWrapped {
 	/**	Add an item to a dictionary. */
 	IDict putProperty(String key, Object value);
 

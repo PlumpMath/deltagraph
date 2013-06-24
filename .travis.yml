@@ -6,3 +6,5 @@ before_install:
 
 script:
   - lein2 midje
+  - cd ../..
+  - mvn test
