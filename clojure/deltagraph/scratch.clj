@@ -25,3 +25,13 @@
 (.addVertex shim/emptyGraph)
 
 (extends? lg/empty-graph java.util.HashMap)
+
+(class #{1 2 3})
+(class (clojure.set/union (sorted-set-by > 1 2 3)
+                          (sorted-set-by > 9 8 7)))
+
+(let [g lg/empty-graph
+      [g v1] (lg/add-vertex g)
+      [g v2] (lg/add-vertex g)
+      [g e] (lg/add-edge g v1 v2)]
+  (lg/connected g v2))

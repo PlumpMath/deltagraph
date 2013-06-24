@@ -54,7 +54,20 @@
                (lg/retrieve-edge g (second (lg/add-edge g2 vx vy)))
                => (throws ExceptionInfo #":type :.*/EDGE-NOT-IN-GRAPH")
 
-               (:id (lg/retrieve-edge g e)) => (:id e))))
+               (:id (lg/retrieve-edge g e)) => (:id e)))
+
+       (fact "connected"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   [g v2] (lg/add-vertex g)
+                   [g v3] (lg/add-vertex g)
+                   [g v4] (lg/add-vertex g)
+                   [g e1] (lg/add-edge g v1 v2)
+                   [g e2] (lg/add-edge g v3 v1)
+                   v1-connected (lg/connected g v1)]
+               (count v1-connected) => 2
+               (v1-connected v2) => truthy
+               (v1-connected v3) => truthy
+               (v1-connected v4) => falsey)))
 
 (facts "removal"
        (fact "remove vertex"

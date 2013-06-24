@@ -1,7 +1,8 @@
 (ns eu.cassiel.deltagraph.lg
   "'Little Graph' package. The graph structure is linked together via vertex and
    node IDs to allow relatively lightweight functional updates."
-  (:use [clojure.core.incubator :only [dissoc-in]]
+  (:use [clojure.set :only [union]]
+        [clojure.core.incubator :only [dissoc-in]]
         [slingshot.slingshot :only [try+ throw+]]))
 
 (def ^{:private true} new-stamp
@@ -22,6 +23,11 @@
   (let [id (new-stamp)
         v {:id id :properties {}}]
     [(assoc-in g [:vertices id] v) v]))
+
+(defn compare-vertex
+  "Vertex comparison is timestamp comparison."
+  [v1 v2]
+  (compare (:id v1) (:id v2)))
 
 (defn add-edge
   "Create a new edge with unique ID between two vertices. As for vertices,
@@ -45,8 +51,7 @@
           [(assoc-in g [:edges id] e) e])))
 
 (defn other
-  "Opposite vertex along an edge. TODO: should probably make sure the edge is
-   in the graph."
+  "Opposite vertex along an edge."
   [{:keys [vertices]} {:keys [from-v to-v] :as e} v]
   (cond (= from-v (:id v))
         (or (get vertices to-v)
@@ -58,6 +63,15 @@
 
         :else
         (throw+ [:type ::VERTEX-NOT-IN-EDGE :v-id (:id v) :e-id (:id e)])))
+
+(defn connected
+  "Get all connected vertices to `v` (as set, since a candidate vertex might
+   show up multiple times via multiple edges)."
+  [{:keys [vertices edges]} v]
+  (let [outgoing-edges (filter (fn [e] (when (= (:from-v e) (:id v)) e)) (vals edges))
+        incoming-edges (filter (fn [e] (when (= (:to-v e) (:id v)) e)) (vals edges))]
+    (union (apply sorted-set-by compare-vertex (map (comp vertices :to-v) outgoing-edges))
+           (apply sorted-set-by compare-vertex (map (comp vertices :from-v) incoming-edges)))))
 
 (defn retrieve-vertex
   "Retrieve 'current' vertex from `g` corresponding to (same ID as) `v`."
