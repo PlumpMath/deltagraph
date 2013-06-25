@@ -69,6 +69,12 @@ Just for fun, we've built console main programs on both sides. Both take a singl
 
 This can be fired off on the Java side from Eclipse, or the Clojure side via `lein run`.
 
+## Continuous Integration Testing
+
+Midje testing (via `lein midje`) works fine - `project.clj` rolls in the Java code so that Clojure can access it. Out-of-the-box Maven testing (via `mvn test`) will appear to work in the Eclipse project directory, but that's only because Eclipse has "compiled" (i.e. copied) the Clojure sources into the Java target directory; in a clean checkout, Maven will fail. Accordingly, `pom.xml` has the Clojure source tree added explicitly to the classpath.
+
+Both sets of tests work (in sequence) on [Travis CI](https://travis-ci.org/cassiel/deltagraph). There are some minor wrinkles in the [Travis configuration file](https://github.com/cassiel/deltagraph/blob/master/.travis.yml) (we must be in the Clojure source directory before running Leiningen).
+
 ## Builds
 
 Standalone builds work fine as well. From the Java side:
