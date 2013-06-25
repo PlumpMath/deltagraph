@@ -15,6 +15,12 @@ public interface IGraph extends IWrapped {
 
 	IGraphPlus<IVertex> addVertex();
 	
+	/**	Retrieve a version (presumably the latest) of a vertex from
+		a specific graph.
+	 */
+	
+	IVertex retrieveVertex(IVertex v);
+	
 	/**	Remove a vertex from a graph (as well as any edges on that vertex).
 
 		@return a new graph
@@ -35,6 +41,12 @@ public interface IGraph extends IWrapped {
 	 */
 	
 	IGraphPlus<IEdge> addEdge(IVertex from, IVertex to);
+
+	/**	Retrieve a version (presumably the latest) of a vertex from
+		a specific graph.
+	 */
+
+	IEdge retrieveEdge(IEdge e);
 
 	/**	Remove an edge from a graph.
 

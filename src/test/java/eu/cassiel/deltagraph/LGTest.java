@@ -50,10 +50,35 @@ public class LGTest {
 		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
 
 		IGraphPlus<IEdge> added3 =
-				added2.getGraph().addEdge(added1.getItem(), added2.getItem());
+			added2.getGraph().addEdge(added1.getItem(), added2.getItem());
 
 		assertEquals(1, added3.getGraph().removeVertex(added1.getItem()).getVertices().size());
 		assertEquals(0, added3.getGraph().removeEdge(added3.getItem()).getEdges().size());
+	}
+	
+	@Test
+	public void retrieval() {
+		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
+		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
+
+		IGraphPlus<IEdge> added3 =
+			added2.getGraph().addEdge(added1.getItem(), added2.getItem());
+		
+		IVertex v = added3.getGraph().retrieveVertex(added1.getItem());
+		assertEquals(added1.getItem().getId(), v.getId());
+		
+		IGraphPlus<IVertex> added4 =
+			v.putDictionary(added3.getGraph(), v.getDictionary().putProperty("A", 99));
+
+		assertNull(v.getDictionary().getProperty("A"));
+		assertEquals(99, added4.getGraph().retrieveVertex(v).getDictionary().getProperty("A"));
+		
+		IEdge e = added3.getItem();
+		IGraphPlus<IEdge> added5 =
+			e.putDictionary(added4.getGraph(), e.getDictionary().putProperty("B", 98));
+
+		assertNull(e.getDictionary().getProperty("B"));
+		assertEquals(98, added5.getGraph().retrieveEdge(e).getDictionary().getProperty("B"));
 	}
 	
 	@Test
@@ -62,7 +87,7 @@ public class LGTest {
 		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
 
 		IGraphPlus<IEdge> added3 =
-				added2.getGraph().addEdge(added1.getItem(), added2.getItem());
+			added2.getGraph().addEdge(added1.getItem(), added2.getItem());
 		
 		assertEquals(added1.getItem().getId(),
 					 added3.getItem().getOther(added3.getGraph(), added2.getItem()).getId());

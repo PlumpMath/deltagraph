@@ -62,11 +62,17 @@
     (^IGraphPlus addVertex [_]
       (graph-plus vertex (lg/add-vertex g)))
 
+    (^IVertex retrieveVertex [_ ^IVertex v]
+      (vertex (lg/retrieve-vertex g (.repr v))))
+
     (^IGraph removeVertex [_ ^IVertex v]
       (graph (lg/remove-vertex g (.repr v))))
 
     (^IGraphPlus addEdge [_ ^IVertex v1 ^IVertex v2]
       (graph-plus edge (lg/add-edge g (.repr v1) (.repr v2))))
+
+    (^IEdge retrieveEdge [_ ^IEdge e]
+      (edge (lg/retrieve-edge g (.repr e))))
 
     (^IGraph removeEdge [_ ^IEdge e]
       (graph (lg/remove-edge g (.repr e))))
