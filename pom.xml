@@ -57,15 +57,29 @@
     </dependency>
   </dependencies>
 
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-compiler-plugin</artifactId>
-      <version>3.1</version>
-      <configuration>
-        <source>1.6</source>
-        <target>1.6</target>
-      </configuration>
-    </plugin>
-  </plugins>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.15</version>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>clojure/deltagraph/src</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>
