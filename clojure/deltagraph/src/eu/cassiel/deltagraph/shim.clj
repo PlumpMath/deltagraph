@@ -1,9 +1,35 @@
 (ns eu.cassiel.deltagraph.shim
   "Java shims for namespace `lg`."
   (:require (eu.cassiel.deltagraph [lg :as lg]))
-  (:import (eu.cassiel.deltagraph IDict)
+  (:import (eu.cassiel.deltagraph IDict IDiff$Modification IDiff$ModType IProperty)
            (eu.cassiel.deltagraph.lg IVertex IEdge IGraph IGraphPlus)
-           (java.util Set)))
+           (java.util Set List)))
+
+(defn- idiff-modification
+  "Create an IDiff.Modification entry. (At the moment, IDiff itself isn't used.)"
+  [;; Wrapper functions:
+   {:keys [wrap-node-opt wrap-value-opt property-opt]}
+   ;; Entries from history:
+   {:keys [modtype
+           old-node new-node
+           key
+           old-value new-value]}]
+  (reify IDiff$Modification
+    (^IDiff$ModType getModType [_]
+      ({:vertex-added IDiff$ModType/VERTEX_ADDED
+        :vertex-removed IDiff$ModType/VERTEX_REMOVED
+        :edge-added IDiff$ModType/EDGE_ADDED
+        :edge-removed IDiff$ModType/EDGE_REMOVED
+        :property-added IDiff$ModType/PROPERTY_ADDED
+        :property-removed IDiff$ModType/PROPERTY_REMOVED
+        :property-changed IDiff$ModType/PROPERTY_CHANGED} modtype))
+
+    (^Object getOld [_] (wrap-node-opt old-node))
+    (^Object getNew [_] (wrap-node-opt new-node))
+    (^IProperty getKey [_] (property-opt key))
+    (^Object getOldValue [_] (wrap-value-opt old-value))
+    (^Object getNewValue [_] (wrap-value-opt new-value))))
+
 
 (defn- dict
   "Create IDict from hash table."
@@ -83,6 +109,12 @@
 
     (^Set getEdges [_]
       (set (map edge (lg/edges g))))
+
+    (^List getChangeHistory [_]
+      (map (partial idiff-modification {:wrap-node-opt identity
+                                        :wrap-value-opt identity
+                                        :property-opt identity})
+           (:change-history g)))
 
     (repr [_] g)))
 

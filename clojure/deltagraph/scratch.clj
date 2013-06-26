@@ -1,7 +1,8 @@
 (ns user
   (:require (eu.cassiel.deltagraph [core :as c]
                                    [lg :as lg]
-                                   [shim :as shim]))
+                                   [shim :as shim]
+                                   [lib :as lib]))
   (:import (eu.cassiel.deltagraph.testing JunkInterface)))
 
 (c/doit)
@@ -37,3 +38,7 @@
   (lg/connected g v2))
 
 (set (map inc #{1 2 3}))
+
+(lib/assoc-alter
+ (assoc-in nil [:A :B] 4)
+ [:A :B] inc)

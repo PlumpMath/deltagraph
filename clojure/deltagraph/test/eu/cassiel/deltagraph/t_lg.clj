@@ -137,3 +137,13 @@
                ((:properties (lg/retrieve-edge g e31')) "E12") => falsey
                ((:properties (lg/retrieve-edge g e31)) "E31") => "3-1"
                ((:properties (lg/retrieve-edge g e31')) "E31") => "3-1")))
+
+(facts "change history"
+       (fact "vertices"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   [g v2] (lg/add-vertex g)
+                   g (lg/remove-vertex g v1)]
+               (count (:change-history g)) => 3
+
+               (map :modtype (:change-history g))
+               => [:vertex-removed :vertex-added :vertex-added])))

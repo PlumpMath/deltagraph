@@ -3,8 +3,10 @@
 
 package eu.cassiel.deltagraph.lg;
 
+import java.util.List;
 import java.util.Set;
 
+import eu.cassiel.deltagraph.IDiff;
 import eu.cassiel.deltagraph.IWrapped;
 
 public interface IGraph extends IWrapped {
@@ -16,8 +18,7 @@ public interface IGraph extends IWrapped {
 	IGraphPlus<IVertex> addVertex();
 	
 	/**	Retrieve a version (presumably the latest) of a vertex from
-		a specific graph.
-	 */
+		a specific graph. */
 	
 	IVertex retrieveVertex(IVertex v);
 	
@@ -43,8 +44,7 @@ public interface IGraph extends IWrapped {
 	IGraphPlus<IEdge> addEdge(IVertex from, IVertex to);
 
 	/**	Retrieve a version (presumably the latest) of a vertex from
-		a specific graph.
-	 */
+		a specific graph. */
 
 	IEdge retrieveEdge(IEdge e);
 
@@ -61,4 +61,10 @@ public interface IGraph extends IWrapped {
 	 */
 
 	Set<IEdge> getEdges();
+	
+	/**	Get change history (provisional code); head is most recent change
+	 	(to this particular graph). */
+	
+	@SuppressWarnings("rawtypes")
+	List<IDiff.Modification> getChangeHistory();
 }

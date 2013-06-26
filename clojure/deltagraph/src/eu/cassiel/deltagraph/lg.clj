@@ -1,6 +1,7 @@
 (ns eu.cassiel.deltagraph.lg
   "'Little Graph' package. The graph structure is linked together via vertex and
    node IDs to allow relatively lightweight functional updates."
+  (:require (eu.cassiel.deltagraph [lib :as lib]))
   (:use [clojure.set :only [union]]
         [clojure.core.incubator :only [dissoc-in]]
         [slingshot.slingshot :only [try+ throw+]]))
@@ -13,7 +14,8 @@
   ^{:doc "The singleton empty graph."}
   empty-graph
   {:edges {}
-   :vertices {}})
+   :vertices {}
+   :change-history nil})
 
 (defn add-vertex
   "Create new vertex (with unique ID). In expectation of alternate representations
@@ -22,7 +24,10 @@
   [g]
   (let [id (new-stamp)
         v {:id id :properties {}}]
-    [(assoc-in g [:vertices id] v) v]))
+    [(-> g
+         (assoc-in [:vertices id] v)
+         (lib/assoc-alter [:change-history] (partial cons {:modtype :vertex-added})))
+     v]))
 
 (defn compare-by-id
   "Vertex/edge comparison is timestamp comparison."
@@ -48,7 +53,10 @@
                  :from-v from-id
                  :to-v to-id
                  :properties {}}]
-          [(assoc-in g [:edges id] e) e])))
+          [(-> g
+               (assoc-in [:edges id] e)
+               (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-added})))
+           e])))
 
 (defn other
   "Opposite vertex along an edge."
@@ -90,7 +98,9 @@
   [g e]
   (let [path [:edges (:id e)]]
     (if (get-in g path)
-      (dissoc-in g path)
+      (-> g
+          (dissoc-in path)
+          (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-removed})))
       (throw+ [:type ::EDGE-NOT-IN-GRAPH :id (:id e)]))))
 
 (defn remove-vertex
@@ -100,7 +110,9 @@
     (if (get-in g path)
       (let [edge-includes-v? (fn [e] (#{(:from-v e) (:to-v e)} id))
             g' (reduce remove-edge g (filter edge-includes-v? (vals (:edges g))))]
-        (dissoc-in g' path))
+        (-> g'
+            (dissoc-in path)
+            (lib/assoc-alter [:change-history] (partial cons {:modtype :vertex-removed}))))
       (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id id]))))
 
 (defn vertices

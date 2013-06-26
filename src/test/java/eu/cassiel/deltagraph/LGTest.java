@@ -5,8 +5,11 @@ package eu.cassiel.deltagraph;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.Test;
 
+import eu.cassiel.deltagraph.IDiff.Modification;
 import eu.cassiel.deltagraph.lg.IGraph;
 import eu.cassiel.deltagraph.lg.IGraphPlus;
 import eu.cassiel.deltagraph.lg.IVertex;
@@ -106,5 +109,22 @@ public class LGTest {
 		
 		assertNull(v.getDictionary().getProperty("ANSWER"));
 		assertEquals(42, added2.getItem().getDictionary().getProperty("ANSWER"));
+	}
+	
+	@Test
+	public void changeHistory() {
+		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
+		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
+		
+		IGraphPlus<IEdge> added3 =
+			added2.getGraph().addEdge(added1.getItem(), added2.getItem());
+		
+		@SuppressWarnings("rawtypes")
+		List<Modification> history = added3.getGraph().getChangeHistory();
+
+		assertEquals(3, history.size());
+
+		assertEquals(IDiff.ModType.EDGE_ADDED, history.get(0).getModType());
+		assertEquals(IDiff.ModType.VERTEX_ADDED, history.get(1).getModType());
 	}
 }
