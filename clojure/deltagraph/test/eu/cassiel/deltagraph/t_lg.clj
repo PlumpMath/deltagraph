@@ -142,8 +142,54 @@
        (fact "vertices"
              (let [[g v1] (lg/add-vertex lg/empty-graph)
                    [g v2] (lg/add-vertex g)
-                   g (lg/remove-vertex g v1)]
-               (count (:change-history g)) => 3
+                   g (lg/remove-vertex g v1)
+                   hist (vec (:change-history g))]
+               (count hist) => 3
 
-               (map :modtype (:change-history g))
-               => [:vertex-removed :vertex-added :vertex-added])))
+               (map :modtype hist)
+               => [:vertex-removed :vertex-added :vertex-added]
+
+               (get-in hist [2 :old-node]) => nil
+               (get-in hist [2 :new-node :id]) => (:id v1)
+
+               (get-in hist [1 :old-node]) => nil
+               (get-in hist [1 :new-node :id]) => (:id v2)
+
+               (get-in hist [0 :old-node :id]) => (:id v1)
+               (get-in hist [0 :new-node]) => nil))
+
+       (fact "vertex removal causes purge"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   [g v2] (lg/add-vertex g)
+                   [g e] (lg/add-edge g v1 v2)
+                   g (lg/remove-vertex g v1)
+                   hist (vec (:change-history g))]
+               (count hist) => 5        ; Removal of vertex also removes edges.
+
+               ; Orphaned edges removed (order undefined) before vertex.
+               (map :modtype hist)
+               => [:vertex-removed :edge-removed
+                   :edge-added :vertex-added :vertex-added]
+
+               (get-in hist [1 :old-node :id]) => (:id e)
+               (get-in hist [1 :new-node]) => nil
+
+               (get-in hist [0 :old-node :id]) => (:id v1)
+               (get-in hist [0 :new-node]) => nil))
+
+       (fact "edges"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   [g v2] (lg/add-vertex g)
+                   [g e] (lg/add-edge g v1 v2)
+                   g (lg/remove-edge g e)
+                   hist (vec (:change-history g))]
+               (count hist) => 4
+
+               (map :modtype hist)
+               => [:edge-removed :edge-added :vertex-added :vertex-added]
+
+               (get-in hist [1 :old-node]) => nil
+               (get-in hist [1 :new-node :id]) => (:id e)
+
+               (get-in hist [0 :old-node :id]) => (:id e)
+               (get-in hist [0 :new-node]) => nil)))

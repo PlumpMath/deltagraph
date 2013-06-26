@@ -125,6 +125,10 @@ public class LGTest {
 		assertEquals(3, history.size());
 
 		assertEquals(IDiff.ModType.EDGE_ADDED, history.get(0).getModType());
+		assertEquals(added3.getItem().getId(),
+					 ((IEdge) history.get(0).getNew()).getId());
 		assertEquals(IDiff.ModType.VERTEX_ADDED, history.get(1).getModType());
+		assertEquals(added2.getItem().getId(),
+					 ((IVertex) history.get(1).getNew()).getId());
 	}
 }

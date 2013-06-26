@@ -26,7 +26,9 @@
         v {:id id :properties {}}]
     [(-> g
          (assoc-in [:vertices id] v)
-         (lib/assoc-alter [:change-history] (partial cons {:modtype :vertex-added})))
+         (lib/assoc-alter [:change-history]
+                          (partial cons {:modtype :vertex-added
+                                         :new-node v})))
      v]))
 
 (defn compare-by-id
@@ -55,7 +57,8 @@
                  :properties {}}]
           [(-> g
                (assoc-in [:edges id] e)
-               (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-added})))
+               (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-added
+                                                                 :new-node e})))
            e])))
 
 (defn other
@@ -100,7 +103,8 @@
     (if (get-in g path)
       (-> g
           (dissoc-in path)
-          (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-removed})))
+          (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-removed
+                                                            :old-node e})))
       (throw+ [:type ::EDGE-NOT-IN-GRAPH :id (:id e)]))))
 
 (defn remove-vertex
@@ -112,7 +116,9 @@
             g' (reduce remove-edge g (filter edge-includes-v? (vals (:edges g))))]
         (-> g'
             (dissoc-in path)
-            (lib/assoc-alter [:change-history] (partial cons {:modtype :vertex-removed}))))
+            (lib/assoc-alter [:change-history]
+                             (partial cons {:modtype :vertex-removed
+                                            :old-node v}))))
       (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id id]))))
 
 (defn vertices

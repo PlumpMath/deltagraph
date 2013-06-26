@@ -5,12 +5,21 @@
            (eu.cassiel.deltagraph.lg IVertex IEdge IGraph IGraphPlus)
            (java.util Set List)))
 
+(declare vertex)
+(declare edge)
+
+(defn- shim-node
+  "The function for wrapping a node (edge, vertex, ...) depending on the `modtype`."
+  [modtype x]
+  (when x
+    (({:vertex-added vertex
+       :vertex-removed vertex
+       :edge-added edge
+       :edge-removed edge} modtype) x)))
+
 (defn- idiff-modification
   "Create an IDiff.Modification entry. (At the moment, IDiff itself isn't used.)"
-  [;; Wrapper functions:
-   {:keys [wrap-node-opt wrap-value-opt property-opt]}
-   ;; Entries from history:
-   {:keys [modtype
+  [{:keys [modtype
            old-node new-node
            key
            old-value new-value]}]
@@ -24,12 +33,11 @@
         :property-removed IDiff$ModType/PROPERTY_REMOVED
         :property-changed IDiff$ModType/PROPERTY_CHANGED} modtype))
 
-    (^Object getOld [_] (wrap-node-opt old-node))
-    (^Object getNew [_] (wrap-node-opt new-node))
-    (^IProperty getKey [_] (property-opt key))
-    (^Object getOldValue [_] (wrap-value-opt old-value))
-    (^Object getNewValue [_] (wrap-value-opt new-value))))
-
+    (^Object getOld [_] (shim-node modtype old-node))
+    (^Object getNew [_] (shim-node modtype new-node))
+    (^IProperty getKey [_] nil)
+    (^Object getOldValue [_] nil)
+    (^Object getNewValue [_] nil)))
 
 (defn- dict
   "Create IDict from hash table."
@@ -111,10 +119,7 @@
       (set (map edge (lg/edges g))))
 
     (^List getChangeHistory [_]
-      (map (partial idiff-modification {:wrap-node-opt identity
-                                        :wrap-value-opt identity
-                                        :property-opt identity})
-           (:change-history g)))
+      (map idiff-modification (:change-history g)))
 
     (repr [_] g)))
 
