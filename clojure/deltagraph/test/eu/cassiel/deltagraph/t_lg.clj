@@ -158,7 +158,7 @@
                (get-in hist [0 :old-node :id]) => (:id v1)
                (get-in hist [0 :new-node]) => nil))
 
-       (fact "vertex removal causes purge"
+       (fact "vertex removal causes edge purge"
              (let [[g v1] (lg/add-vertex lg/empty-graph)
                    [g v2] (lg/add-vertex g)
                    [g e] (lg/add-edge g v1 v2)
@@ -192,4 +192,41 @@
                (get-in hist [1 :new-node :id]) => (:id e)
 
                (get-in hist [0 :old-node :id]) => (:id e)
-               (get-in hist [0 :new-node]) => nil)))
+               (get-in hist [0 :new-node]) => nil))
+
+       (fact "property change"
+             (let [[g v1] (lg/add-vertex lg/empty-graph)
+                   [g v2] (lg/put-dictionary g :vertices v1 {"ANSWER_1" 42})
+                   ;; This will "remove" `ANSWER_1` and add `ANSWER_2`:
+                   [g v3] (lg/put-dictionary g :vertices v2 {"ANSWER_2" 43})
+                   [g v4] (lg/put-dictionary g :vertices v3 {"ANSWER_2" 99})
+                   [g v5] (lg/put-dictionary g :vertices v4 {"ANSWER_2" 99})
+                   hist (vec (:change-history g))]
+               (count hist) => 5
+
+               (map :modtype hist)
+               => [:property-changed :property-added :property-removed :property-added
+                   :vertex-added]
+
+               ;; Property changes leave the "same" vertex in place:
+               (:id v5) => (:id v2)
+               (:id v4) => (:id v2)
+               (:id v3) => (:id v2)
+
+               (get-in hist [0 :old-node :id]) => (:id v5)
+               (get-in hist [0 :new-node :id]) => (:id v5)
+               (get-in hist [0 :key]) => "ANSWER_2"
+               (get-in hist [0 :old-value]) => 43
+               (get-in hist [0 :new-value]) => 99
+
+               (get-in hist [1 :old-node :id]) => (:id v5)
+               (get-in hist [1 :old-value]) => nil
+               (get-in hist [1 :key]) => "ANSWER_2"
+               (get-in hist [1 :new-node :id]) => (:id v5)
+               (get-in hist [1 :new-value]) => 43
+
+               (get-in hist [2 :old-node :id]) => (:id v5)
+               (get-in hist [2 :old-value]) => 42
+               (get-in hist [2 :key]) => "ANSWER_1"
+               (get-in hist [2 :new-node :id]) => (:id v5)
+               (get-in hist [2 :new-value]) => nil)))

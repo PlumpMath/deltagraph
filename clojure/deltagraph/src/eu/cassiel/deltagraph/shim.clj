@@ -1,7 +1,7 @@
 (ns eu.cassiel.deltagraph.shim
   "Java shims for namespace `lg`."
   (:require (eu.cassiel.deltagraph [lg :as lg]))
-  (:import (eu.cassiel.deltagraph IDict IDiff$Modification IDiff$ModType IProperty)
+  (:import (eu.cassiel.deltagraph IDict IDiff$Modification IDiff$ModType)
            (eu.cassiel.deltagraph.lg IVertex IEdge IGraph IGraphPlus)
            (java.util Set List)))
 
@@ -35,7 +35,7 @@
 
     (^Object getOld [_] (shim-node modtype old-node))
     (^Object getNew [_] (shim-node modtype new-node))
-    (^IProperty getKey [_] nil)
+    (^String getKey [_] nil)
     (^Object getOldValue [_] nil)
     (^Object getNewValue [_] nil)))
 

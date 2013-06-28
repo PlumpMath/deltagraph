@@ -48,8 +48,13 @@
       [g v2] (lg/add-vertex g)
       [g e] (lg/add-edge g v1 v2)
       g (lg/remove-vertex g v1)]
-  {:A (:change-history g)
-   :B (get-in (vec (:change-history g)) [2 :new-node :id])})
+  (:change-history g))
+
+(let [g lg/empty-graph
+      [g v1] (lg/add-vertex g)
+      [g v2] (lg/put-dictionary g :vertices v1 {:A "AA"})
+      [g v3] (lg/put-dictionary g :vertices v2 {:A "AA"})]
+  g)
 
 (= (set [1 2])
    (set [2 1]))
@@ -58,3 +63,12 @@
  (.getNew
   (shim/idiff-modification {:modtype :edge-added
                             :new-node {:id 2222}})))
+
+(as-> 43 a
+      (* a a))
+
+(clojure.set/difference (set [1]) (set [2]))
+
+(seq #{1 2})
+
+(reduce (fn [x a] (cons a x)) nil (set [1 2 3]))

@@ -13,12 +13,21 @@ public interface IDiff {
 				   PROPERTY_CHANGED
 				 };
 				 
+	/**	Single modification. The type parameters are not rigorously
+	 	enforced on the Clojure side.
+	 */
+
 	interface Modification<Node, PropType> {
 		ModType getModType();
+		/**	Previous node value, if any. */
 		Node getOld();
+		/**	Next node value, if any. (At least one of previous or next present.) */
 		Node getNew();
-		IProperty<PropType> getKey();
+		/** Key for property change, if any. */
+		String getKey();
+		/** Previous property value, if any. */
 		PropType getOldValue();
+		/** Subsequent property value, if any. */
 		PropType getNewValue();
 	};
 }

@@ -2,7 +2,7 @@
   "'Little Graph' package. The graph structure is linked together via vertex and
    node IDs to allow relatively lightweight functional updates."
   (:require (eu.cassiel.deltagraph [lib :as lib]))
-  (:use [clojure.set :only [union]]
+  (:use [clojure.set :only [union difference intersection]]
         [clojure.core.incubator :only [dissoc-in]]
         [slingshot.slingshot :only [try+ throw+]]))
 
@@ -132,8 +132,55 @@
   (apply sorted-set-by compare-by-id (vals ee)))
 
 (defn put-dictionary
-  "Works for both edges and vertices"
+  "Works for both edges and vertices. In the history we'll plant the removes,
+   then the changes, then the adds, but within each category there's no guarantee
+   of order."
   [g collection-tag item dict]
-  (let [item' (assoc item :properties dict)]
-    [(assoc-in g [collection-tag (:id item)] item')
+  (let [old-dict (get-in g [collection-tag (:id item) :properties])
+        old-keys (set (keys old-dict))
+        new-keys (set (keys dict))
+        removed (difference old-keys new-keys)
+        added (difference new-keys old-keys)
+        common (intersection old-keys new-keys)
+        item' (assoc item :properties dict)
+        ;; Note that the `old-node` and `new-node` values are those before and after
+        ;; the entire `put-dictionary` call, and are the same in all of the change
+        ;; entries. (TODO: Do we want incremental ones?)
+        change-history (as-> (:change-history g) ch
+                             ;; Removed items:
+                             (reduce (fn [ch k] (cons {:modtype :property-removed
+                                                      :old-node item
+                                                      :new-node item'
+                                                      :key k
+                                                      :old-value (get old-dict k)
+                                                      :new-value nil} ch))
+                                     ch
+                                     removed)
+                             ;; Changed items (but only when the actual property changes):
+                             (reduce (fn [ch k] (let [old-value (get old-dict k)
+                                                     new-value (get dict k)]
+                                                 (if (.equals old-value new-value)
+                                                   ch
+                                                   (cons
+                                                    {:modtype :property-changed
+                                                     :old-node item
+                                                     :new-node item'
+                                                     :key k
+                                                     :old-value old-value
+                                                     :new-value new-value} ch))))
+                                     ch
+                                     common)
+                             ;; Added items:
+                             (reduce (fn [ch k] (cons {:modtype :property-added
+                                                      :old-node item
+                                                      :new-node item'
+                                                      :key k
+                                                      :old-value nil
+                                                      :new-value (get dict k)} ch))
+                                     ch
+                                     added))]
+    [(-> g
+         (assoc-in [collection-tag (:id item)] item')
+         (assoc :change-history change-history
+                :common common))
      item']))
