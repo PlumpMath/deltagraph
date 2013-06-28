@@ -14,5 +14,9 @@ public class LG {
 
 	/**	Entry point: fixed empty graph. */
 	public static IGraph emptyGraph =
-			(IGraph) RT.var("eu.cassiel.deltagraph.shim", "emptyGraph").get();
+		(IGraph) RT.var("eu.cassiel.deltagraph.shim", "emptyGraph").get();
+	
+	/**	Entry point: fixed empty dictionary. */
+	public static IDict emptyDict =
+		(IDict) RT.var("eu.cassiel.deltagraph.shim", "emptyDict").get();
 }

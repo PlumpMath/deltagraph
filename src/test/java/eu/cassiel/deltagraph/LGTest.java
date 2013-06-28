@@ -112,7 +112,7 @@ public class LGTest {
 	}
 	
 	@Test
-	public void changeHistory() {
+	public void topologyChangeHistory() {
 		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
 		IGraphPlus<IVertex> added2 = added1.getGraph().addVertex();
 		
@@ -126,9 +126,39 @@ public class LGTest {
 
 		assertEquals(IDiff.ModType.EDGE_ADDED, history.get(0).getModType());
 		assertEquals(added3.getItem().getId(),
-					 ((IEdge) history.get(0).getNew()).getId());
+					 ((IEdge) history.get(0).getNewNode()).getId());
 		assertEquals(IDiff.ModType.VERTEX_ADDED, history.get(1).getModType());
 		assertEquals(added2.getItem().getId(),
-					 ((IVertex) history.get(1).getNew()).getId());
+					 ((IVertex) history.get(1).getNewNode()).getId());
+	}
+	
+	@Test
+	public void propertyChangeHistory() {
+		IGraphPlus<IVertex> added1 = LG.emptyGraph.addVertex();
+		IGraphPlus<IVertex> added2 =
+			added1.getItem().putDictionary(added1.getGraph(),
+										   LG.emptyDict.putProperty("A", 50));
+		IGraphPlus<IVertex> added3 =
+			added2.getItem().putDictionary(added2.getGraph(),
+										   LG.emptyDict.putProperty("B", 99));
+		
+		@SuppressWarnings("rawtypes")
+		List<Modification> history = added3.getGraph().getChangeHistory();
+
+		assertEquals(4, history.size());
+
+		assertEquals(IDiff.ModType.VERTEX_ADDED, history.get(3).getModType());
+		assertEquals(IDiff.ModType.PROPERTY_ADDED, history.get(2).getModType());
+		assertEquals(IDiff.ModType.PROPERTY_REMOVED, history.get(1).getModType());
+		assertEquals(IDiff.ModType.PROPERTY_ADDED, history.get(0).getModType());
+		
+		@SuppressWarnings("rawtypes")
+		Modification m = history.get(0);
+
+		assertEquals("B", m.getKey());
+		assertNull(m.getOldValue());
+		assertEquals(99, m.getNewValue());
+		assertEquals(added1.getItem().getId(), ((IVertex) m.getOldNode()).getId());
+		assertEquals(added1.getItem().getId(), ((IVertex) m.getNewNode()).getId());
 	}
 }

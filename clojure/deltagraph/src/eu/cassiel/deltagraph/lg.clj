@@ -27,7 +27,8 @@
     [(-> g
          (assoc-in [:vertices id] v)
          (lib/assoc-alter [:change-history]
-                          (partial cons {:modtype :vertex-added
+                          (partial cons {:mod-type :vertex-added
+                                         :node-type :vertex
                                          :new-node v})))
      v]))
 
@@ -57,7 +58,8 @@
                  :properties {}}]
           [(-> g
                (assoc-in [:edges id] e)
-               (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-added
+               (lib/assoc-alter [:change-history] (partial cons {:mod-type :edge-added
+                                                                 :node-type :edge
                                                                  :new-node e})))
            e])))
 
@@ -103,7 +105,8 @@
     (if (get-in g path)
       (-> g
           (dissoc-in path)
-          (lib/assoc-alter [:change-history] (partial cons {:modtype :edge-removed
+          (lib/assoc-alter [:change-history] (partial cons {:mod-type :edge-removed
+                                                            :node-type :edge
                                                             :old-node e})))
       (throw+ [:type ::EDGE-NOT-IN-GRAPH :id (:id e)]))))
 
@@ -117,7 +120,8 @@
         (-> g'
             (dissoc-in path)
             (lib/assoc-alter [:change-history]
-                             (partial cons {:modtype :vertex-removed
+                             (partial cons {:mod-type :vertex-removed
+                                            :node-type :vertex
                                             :old-node v}))))
       (throw+ [:type ::VERTEX-NOT-IN-GRAPH :id id]))))
 
@@ -135,7 +139,7 @@
   "Works for both edges and vertices. In the history we'll plant the removes,
    then the changes, then the adds, but within each category there's no guarantee
    of order."
-  [g collection-tag item dict]
+  [g collection-tag node-type item dict]
   (let [old-dict (get-in g [collection-tag (:id item) :properties])
         old-keys (set (keys old-dict))
         new-keys (set (keys dict))
@@ -148,7 +152,8 @@
         ;; entries. (TODO: Do we want incremental ones?)
         change-history (as-> (:change-history g) ch
                              ;; Removed items:
-                             (reduce (fn [ch k] (cons {:modtype :property-removed
+                             (reduce (fn [ch k] (cons {:mod-type :property-removed
+                                                      :node-type node-type
                                                       :old-node item
                                                       :new-node item'
                                                       :key k
@@ -162,7 +167,8 @@
                                                  (if (.equals old-value new-value)
                                                    ch
                                                    (cons
-                                                    {:modtype :property-changed
+                                                    {:mod-type :property-changed
+                                                     :node-type node-type
                                                      :old-node item
                                                      :new-node item'
                                                      :key k
@@ -171,7 +177,8 @@
                                      ch
                                      common)
                              ;; Added items:
-                             (reduce (fn [ch k] (cons {:modtype :property-added
+                             (reduce (fn [ch k] (cons {:mod-type :property-added
+                                                      :node-type node-type
                                                       :old-node item
                                                       :new-node item'
                                                       :key k

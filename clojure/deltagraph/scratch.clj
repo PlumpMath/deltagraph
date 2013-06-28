@@ -52,8 +52,8 @@
 
 (let [g lg/empty-graph
       [g v1] (lg/add-vertex g)
-      [g v2] (lg/put-dictionary g :vertices v1 {:A "AA"})
-      [g v3] (lg/put-dictionary g :vertices v2 {:A "AA"})]
+      [g v2] (lg/put-dictionary g :vertices :vertex v1 {:A "AA"})
+      [g v3] (lg/put-dictionary g :vertices :vertex v2 {:A "AA"})]
   g)
 
 (= (set [1 2])

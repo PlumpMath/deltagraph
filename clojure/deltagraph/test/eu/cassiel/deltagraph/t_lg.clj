@@ -113,7 +113,7 @@
        (fact "add dictionary item to vertex"
              (let [[g v1] (lg/add-vertex lg/empty-graph)
                    d (assoc (:properties v1) "ANSWER" 42)
-                   [g v2] (lg/put-dictionary g :vertices v1 d)
+                   [g v2] (lg/put-dictionary g :vertices :vertex v1 d)
                    v3 (lg/retrieve-vertex g v1)]
                ((:properties v2) "ANSWER") => 42
                ((:properties v3) "ANSWER") => 42
@@ -127,8 +127,8 @@
                    [g e31] (lg/add-edge g v3 v1)
                    d12 (assoc (:properties e12) "E12" "1-2")
                    d31 (assoc (:properties e31) "E31" "3-1")
-                   [g e12'] (lg/put-dictionary g :edges e12 d12)
-                   [g e31'] (lg/put-dictionary g :edges e31 d31)]
+                   [g e12'] (lg/put-dictionary g :edges :edge e12 d12)
+                   [g e31'] (lg/put-dictionary g :edges :edge e31 d31)]
                ((:properties (lg/retrieve-edge g e12)) "E12") => "1-2"
                ((:properties (lg/retrieve-edge g e12')) "E12") => "1-2"
                ((:properties (lg/retrieve-edge g e12)) "E31") => falsey
@@ -146,7 +146,7 @@
                    hist (vec (:change-history g))]
                (count hist) => 3
 
-               (map :modtype hist)
+               (map :mod-type hist)
                => [:vertex-removed :vertex-added :vertex-added]
 
                (get-in hist [2 :old-node]) => nil
@@ -167,7 +167,7 @@
                (count hist) => 5        ; Removal of vertex also removes edges.
 
                ; Orphaned edges removed (order undefined) before vertex.
-               (map :modtype hist)
+               (map :mod-type hist)
                => [:vertex-removed :edge-removed
                    :edge-added :vertex-added :vertex-added]
 
@@ -185,7 +185,7 @@
                    hist (vec (:change-history g))]
                (count hist) => 4
 
-               (map :modtype hist)
+               (map :mod-type hist)
                => [:edge-removed :edge-added :vertex-added :vertex-added]
 
                (get-in hist [1 :old-node]) => nil
@@ -196,15 +196,15 @@
 
        (fact "property change"
              (let [[g v1] (lg/add-vertex lg/empty-graph)
-                   [g v2] (lg/put-dictionary g :vertices v1 {"ANSWER_1" 42})
+                   [g v2] (lg/put-dictionary g :vertices :vertex v1 {"ANSWER_1" 42})
                    ;; This will "remove" `ANSWER_1` and add `ANSWER_2`:
-                   [g v3] (lg/put-dictionary g :vertices v2 {"ANSWER_2" 43})
-                   [g v4] (lg/put-dictionary g :vertices v3 {"ANSWER_2" 99})
-                   [g v5] (lg/put-dictionary g :vertices v4 {"ANSWER_2" 99})
+                   [g v3] (lg/put-dictionary g :vertices :vertex v2 {"ANSWER_2" 43})
+                   [g v4] (lg/put-dictionary g :vertices :vertex v3 {"ANSWER_2" 99})
+                   [g v5] (lg/put-dictionary g :vertices :vertex v4 {"ANSWER_2" 99})
                    hist (vec (:change-history g))]
                (count hist) => 5
 
-               (map :modtype hist)
+               (map :mod-type hist)
                => [:property-changed :property-added :property-removed :property-added
                    :vertex-added]
 

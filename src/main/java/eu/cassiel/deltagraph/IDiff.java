@@ -20,9 +20,9 @@ public interface IDiff {
 	interface Modification<Node, PropType> {
 		ModType getModType();
 		/**	Previous node value, if any. */
-		Node getOld();
+		Node getOldNode();
 		/**	Next node value, if any. (At least one of previous or next present.) */
-		Node getNew();
+		Node getNewNode();
 		/** Key for property change, if any. */
 		String getKey();
 		/** Previous property value, if any. */

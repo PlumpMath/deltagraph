@@ -9,17 +9,16 @@
 (declare edge)
 
 (defn- shim-node
-  "The function for wrapping a node (edge, vertex, ...) depending on the `modtype`."
-  [modtype x]
+  "The function for wrapping a node (edge, vertex, ...) depending on the `mod-type`."
+  [node-type x]
   (when x
-    (({:vertex-added vertex
-       :vertex-removed vertex
-       :edge-added edge
-       :edge-removed edge} modtype) x)))
+    (({:vertex vertex
+       :edge edge} node-type) x)))
 
 (defn- idiff-modification
   "Create an IDiff.Modification entry. (At the moment, IDiff itself isn't used.)"
-  [{:keys [modtype
+  [{:keys [mod-type
+           node-type
            old-node new-node
            key
            old-value new-value]}]
@@ -31,13 +30,13 @@
         :edge-removed IDiff$ModType/EDGE_REMOVED
         :property-added IDiff$ModType/PROPERTY_ADDED
         :property-removed IDiff$ModType/PROPERTY_REMOVED
-        :property-changed IDiff$ModType/PROPERTY_CHANGED} modtype))
+        :property-changed IDiff$ModType/PROPERTY_CHANGED} mod-type))
 
-    (^Object getOld [_] (shim-node modtype old-node))
-    (^Object getNew [_] (shim-node modtype new-node))
-    (^String getKey [_] nil)
-    (^Object getOldValue [_] nil)
-    (^Object getNewValue [_] nil)))
+    (^Object getOldNode [_] (shim-node node-type old-node))
+    (^Object getNewNode [_] (shim-node node-type new-node))
+    (^String getKey [_] key)
+    (^Object getOldValue [_] old-value)
+    (^Object getNewValue [_] new-value)))
 
 (defn- dict
   "Create IDict from hash table."
@@ -67,7 +66,7 @@
     (^IGraphPlus putDictionary [_
                                 ^IGraph g
                                 ^IDict d]
-      (graph-plus vertex (lg/put-dictionary (.repr g) :vertices v (.repr d))))
+      (graph-plus vertex (lg/put-dictionary (.repr g) :vertices :vertex v (.repr d))))
 
     (repr [_] v)))
 
@@ -80,7 +79,7 @@
     (^IGraphPlus putDictionary [_
                                 ^IGraph g
                                 ^IDict d]
-      (graph-plus edge (lg/put-dictionary (.repr g) :edges e (.repr d))))
+      (graph-plus edge (lg/put-dictionary (.repr g) :edges :edge e (.repr d))))
 
     (^IVertex getOther [_
                         ^IGraph g
@@ -125,3 +124,6 @@
 
 (def emptyGraph
   (graph lg/empty-graph))
+
+(def emptyDict
+  (dict {}))
