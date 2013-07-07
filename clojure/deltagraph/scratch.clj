@@ -3,7 +3,7 @@
                                    [lg :as lg]
                                    [shim :as shim]
                                    [lib :as lib]))
-  (:import (eu.cassiel.deltagraph.testing JunkInterface)))
+  (:import (eu.cassiel.deltagraph.testing IJunkInterface)))
 
 (c/doit)
 
@@ -72,3 +72,5 @@
 (seq #{1 2})
 
 (reduce (fn [x a] (cons a x)) nil (set [1 2 3]))
+
+(class 24/10)
