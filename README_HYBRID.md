@@ -6,7 +6,7 @@
 
 We want to develop purely in Clojure but present an API which is constructed purely from Java interfaces (plus, I guess, a tiny bit of "real" Java as entry point), for transparent use from a Java environment. So: this is a hybrid Leiningen project plus an Eclipse Java project. The Java needs to call into Clojure (for actual implementation code), while the Clojure needs access to the Java (for interfaces which it is going to [reify](http://clojuredocs.org/clojure_core/clojure.core/reify)). And we want to be developing in Clojure without worrying about `gen-class` to keep the Java world up-to-date.
 
-On the Eclipse side: a standard Maven Java project. At top-level, there's an additional directory called `clojure`, containing `datagraph` which is a separate Leiningen project.
+On the Eclipse side: a standard Maven Java project, and a Leiningen project also at top level. Both Maven (standalone or via Eclipse) and Leiningen will generate a tree of class files under `target`, but these should be the same regardless of which tool makes them.
 
 ## Clojure from Java
 
@@ -21,7 +21,7 @@ This side of the interop (invoking Clojure from Java) is fairly well documented:
 	(IJunkInterface) RT.var("eu.cassiel.deltagraph.core", "doit").invoke();
         ...
 
-The root of the Clojure source tree (in our case, `clojure/datagraph/src`) needs to be a source directory in Eclipse, to get it into the classpath. (It can be added as a library directory instead, but that probably doesn't get it copied into JARs during a Maven build - see below.)
+The root of the Clojure source tree (in our case, `src/main/clojure`) needs to be a source directory in Eclipse, to get it into the classpath. (It can be added as a library directory instead, but that probably doesn't get it copied into JARs during a Maven build - see below.)
 
 ## Java from Clojure
 
@@ -37,15 +37,13 @@ This is standard interop: we just `reify`:
 
 We need to see the Java interfaces from Clojure, so our [project.clj](clojure/deltagraph/project.clj) contains this:
 
-        :java-source-paths ["../../src/main/java"]
+        :java-source-paths ["src/main/java"]
 
 At this stage, we can fire off tests in jUnit (either from Eclipse or `mvn test`) and calls into Clojure work fine. Similarly, Midje unit tests in Clojure call into Java without problems.
 
 ## Usage
 
 If the Clojure source directory is added to the Eclipse project, then the top-level `target` directory will contain both (a copy of) the Clojure sources - possibly after a refresh if they've been edited externally - and the compiled Java classes, ready for adding to a classpath for development.
-
-Leiningen can offer the same assets. The Clojure sources are in the Clojure `src` directory, but Leiningen needs to be told to compile the Java sources (`lein javac`) into its own `target` directory. Clearly, the directory offered by Eclipse is more convenient.
 
 For actual development, it makes sense to spawn a thread with a network REPL into a running system. I leave this as an exercise. (I have one in the [Cubewar server](https://github.com/cassiel/cubewar).)
 
@@ -79,7 +77,6 @@ Both sets of tests work (in sequence) on [Travis CI](https://travis-ci.org/cassi
 
 Standalone builds work fine as well. From the Java side:
 
-        cd [...]
         mvn package
         cd target/
         java -cp [...]/clojure-1.5.1.jar:eu.cassiel.deltagraph-0.0.1-SNAPSHOT.jar \
@@ -89,7 +86,6 @@ Standalone builds work fine as well. From the Java side:
 
 From the Clojure side:
 
-        cd [...]
         lein uberjar
         cd target/
         java -jar eu.cassiel.deltagraph-clj-0.1.0-SNAPSHOT-standalone.jar 5
